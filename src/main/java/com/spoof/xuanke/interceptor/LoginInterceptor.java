@@ -25,17 +25,15 @@ public class LoginInterceptor extends PathMatchingFilter {
             httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
             return true;
         }
-
         String requestAPI = getPathWithinApplication(request);
         System.out.println(requestAPI);
-
-        Subject subject = SecurityUtils.getSubject();
-
-        if (!subject.isAuthenticated()) {
-            System.out.println("需要登录");
-            return false;
-        }else{
-            return true;
-        }
+        return true;
+//        Subject subject = SecurityUtils.getSubject();
+//        if (!subject.isAuthenticated()) {
+//            System.out.println("需要登录");
+//            return true;
+//        }else{
+//            return false;
+//        }
     }
 }

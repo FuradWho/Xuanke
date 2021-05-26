@@ -1,10 +1,9 @@
 package com.spoof.xuanke.web.service;
 
-import com.spoof.xuanke.pojo.Course;
-import com.spoof.xuanke.pojo.GetCourse;
-import com.spoof.xuanke.pojo.StudentInfo;
+import com.spoof.xuanke.pojo.*;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CourseService {
 
@@ -18,5 +17,14 @@ public interface CourseService {
 
     int addNewCourse(Course course);
 
-    List<StudentInfo> getStudentByTeacherId(Integer id);
+    Set<StudentInfo> getStudentByTeacherId(Integer id);
+
+    List<GetCourse> getAllCourse(int pagenum, int pagesize);
+
+    int updateRemarks(RemarkInfo remarkInfo);
+
+    List<SupCourseInfo> getSupCourseList(int pagenum, int pagesize);
+
+
+    int getCourseCount();
 }

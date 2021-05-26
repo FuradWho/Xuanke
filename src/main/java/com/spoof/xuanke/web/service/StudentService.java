@@ -10,7 +10,7 @@ public interface StudentService {
 
     Student findStudentById(int id);
 
-    void updateStudent(Student student);
+    int updateStudent(Student student);
 
     void insertStudent(Student student);
 

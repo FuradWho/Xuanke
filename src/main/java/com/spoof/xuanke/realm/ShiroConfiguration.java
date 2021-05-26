@@ -64,11 +64,11 @@ public class ShiroConfiguration {
         Map<String, Filter> customizedFilter = new HashMap<>();
 
         customizedFilter.put("url",new LoginInterceptor());
-        filterChainDefinitionMap.put("/admin/**","url");
-      //  filterChainDefinitionMap.put("/getData","roles[student]");
-
+        filterChainDefinitionMap.put("/**","url");
         filterChainDefinitionMap.put("/authentication", "authc");
+        shiroFilterFactoryBean.setLoginUrl("/login");
         shiroFilterFactoryBean.setFilters(customizedFilter);
+
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
@@ -201,7 +201,7 @@ public class ShiroConfiguration {
         shiroSessionManager.setGlobalSessionTimeout(1800000);
         shiroSessionManager.setDeleteInvalidSessions(true);
         shiroSessionManager.setSessionValidationSchedulerEnabled(true);
-        shiroSessionManager.setSessionValidationInterval(3600000);
+        shiroSessionManager.setSessionValidationInterval(1800000);
 
         return shiroSessionManager;
     }

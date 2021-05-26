@@ -1,16 +1,22 @@
 package com.spoof.xuanke.Exceptions;
 
 
-import org.apache.shiro.authc.ExpiredCredentialsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
+import com.spoof.xuanke.util.ResultUtil;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@ControllerAdvice(basePackages = "com.spoof.xuanke.realm")
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
+@ControllerAdvice
 public class AuthExceptionHandler {
 
 
@@ -48,4 +54,11 @@ public class AuthExceptionHandler {
     public String unauthorizedExceptionHandlerMethod(UnauthorizedException e){
         return "未授权！请联系管理员授权";
     }
+
+    @ResponseBody
+    @ExceptionHandler(AuthorizationException.class)
+    public String AuthorizationException(Exception ex) {
+        return "权限不足";
+    }
+
 }

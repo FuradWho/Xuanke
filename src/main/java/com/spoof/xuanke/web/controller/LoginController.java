@@ -12,8 +12,7 @@ import com.spoof.xuanke.web.service.Impl.MenusService;
 import com.spoof.xuanke.web.service.MajorService;
 import com.spoof.xuanke.web.service.StudentService;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -72,26 +71,31 @@ public class LoginController {
     @PostMapping("/login")
     public Object login(@RequestBody Student student, HttpSession session) {
 
-        Student student1 = studentService.findStudentByCode(student.getStuCode());
         boolean flag = studentService.isExist(student);
+        System.out.println(student);
         if (flag) {
             try {
                 Subject subject = SecurityUtils.getSubject();
-
                 UsernamePasswordToken token = new UsernamePasswordToken(student.getStuCode(), student.getStuPassword());
                 subject.login(token);
                 Serializable id = SecurityUtils.getSubject().getSession().getId();
-                List<String> list = new ArrayList<>();
-                list.add(student1.getRole().toString());
                 Map<String, Object> map = new HashMap<>();
                 map.put("msg", "登录成功");
                 map.put("token", id);
                 return ResultUtil.success(map);
             } catch (AuthenticationException e) {
-                return ResultUtil.fail("账号密码错误");
+                if (e instanceof UnknownAccountException) {
+                    return ResultUtil.fail("用户不存在");
+                } else if (e instanceof IncorrectCredentialsException) {
+                    return ResultUtil.fail("密码不正确");
+                } else if (e instanceof LockedAccountException) {
+                    return ResultUtil.fail("用户账号被锁定");
+                } else {
+                    return ResultUtil.fail("认证失败");
+                }
             }
         } else {
-            return ResultUtil.fail("账号密码错误");
+            return ResultUtil.fail("账号不存在");
         }
     }
 
@@ -111,19 +115,26 @@ public class LoginController {
     @GetMapping("/getMenus")
     public Object getMenus(){
         Student student = getStudentBySubiect();
-        menusService =new MenusService();
-        return ResultUtil.success(menusService.menuList(student.getRole().toString()));
-
+        if (null == student){
+            return ResultUtil.fail("未登录");
+        }else{
+            menusService =new MenusService();
+            return ResultUtil.success(menusService.menuList(student.getRole().toString()));
+        }
     }
 
-    public Student getStudentBySubiect(){
+    public Student getStudentBySubiect() {
 
-        try{
-            Subject subject =SecurityUtils.getSubject();
-            String stuCode = subject.getPrincipal().toString();
-            Student student =studentService.findStudentByCode(stuCode);
-            return student;
-        }catch (Exception e){
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            if (subject.isAuthenticated()) {
+                String stuCode = subject.getPrincipal().toString();
+                Student student = studentService.findStudentByCode(stuCode);
+                return student;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

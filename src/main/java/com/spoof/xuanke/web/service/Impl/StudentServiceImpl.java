@@ -34,8 +34,12 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void updateStudent(Student student) {
-        studentMapper.updateById(student);
+    public int updateStudent(Student student) {
+
+        QueryWrapper<Student> queryWrapper =new QueryWrapper<>();
+        queryWrapper.eq("stu_code",student.getStuCode());
+        int flag = studentMapper.update(student,queryWrapper);
+        return flag;
     }
 
     @Override
@@ -83,7 +87,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public boolean registerData(Student student , String stuCode, String password) {
         String newPs = new SimpleHash("MD5", password, new ShiroByteSource(stuCode), 1024).toHex();
-        student.setId(91);
+        student.setId(93);
         student.setSalt(stuCode);
         student.setCreateTime(new Date());
         student.setStuPassword(newPs);

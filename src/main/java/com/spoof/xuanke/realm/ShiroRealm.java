@@ -25,7 +25,10 @@ public class ShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        Student student = (Student) principalCollection.getPrimaryPrincipal();
+        String code = (String) principalCollection.getPrimaryPrincipal();
+        System.out.println(code);
+        Student student = studentService.findStudentByCode(code);
+        System.out.println(student.getRole());
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
 
         List<String> permissions = new ArrayList<>();
@@ -59,8 +62,6 @@ public class ShiroRealm extends AuthorizingRealm {
         String stuCode = token.getUsername();
         Student student = studentService.findStudentByCode(stuCode);
         SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(stuCode, student.getStuPassword(), new ShiroByteSource(stuCode),getName());
-
-       // ShiroUtils.deleteCache(student.getStuCode(),true);
         return simpleAuthenticationInfo;
     }
 }
